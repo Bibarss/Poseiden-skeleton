@@ -1,7 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.repositories.TradeRepository;
+import com.nnk.springboot.service.TradeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ public class TradeControllerTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private TradeRepository tradeRepository;
+    private TradeService tradeService;
 
     private MockMvc mockMvc;
 
@@ -66,7 +66,7 @@ public class TradeControllerTests {
     public void testShowTradeListPage() throws Exception {
 
         // Enregistrer un Trade pour le test
-        tradeRepository.save(testTrade);
+        tradeService.save(testTrade);
 
         mockMvc.perform(get("/trade/list"))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ public class TradeControllerTests {
                 .andExpect(redirectedUrl("/trade/list"));
 
         // Vérifier que le Trade a été ajouté en base de données
-        List<Trade> trades = tradeRepository.findAll();
+        List<Trade> trades = tradeService.findAll();
         assertThat(trades, hasItem(hasProperty("account", is("Account Test2"))));
     }
 
@@ -105,7 +105,7 @@ public class TradeControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un Trade pour le test
-        Trade savedTrade = tradeRepository.save(testTrade);
+        Trade savedTrade = tradeService.save(testTrade);
 
         // Effectuer une requête GET sur /trade/update/{id}
         mockMvc.perform(get("/trade/update/" + savedTrade.getTradeId()))
@@ -119,7 +119,7 @@ public class TradeControllerTests {
     @WithMockUser
     public void testUpdateTrade() throws Exception {
         // Enregistrer un Trade pour le test
-        Trade savedTrade = tradeRepository.save(testTrade);
+        Trade savedTrade = tradeService.save(testTrade);
 
         // Effectuer une requête POST sur /trade/update/{id} avec des données mises à jour
         mockMvc.perform(post("/trade/update/" + savedTrade.getTradeId())
@@ -131,7 +131,7 @@ public class TradeControllerTests {
                 .andExpect(redirectedUrl("/trade/list"));
 
         // Vérifier que le Trade a été mis à jour
-        Trade updatedTrade = tradeRepository.findById(savedTrade.getTradeId()).orElse(null);
+        Trade updatedTrade = tradeService.findById(savedTrade.getTradeId());
         assertNotNull(updatedTrade);
         assertThat(updatedTrade.getAccount(), is("Account Test3"));
     }
@@ -140,7 +140,7 @@ public class TradeControllerTests {
     @WithMockUser
     public void testDeleteTrade() throws Exception {
         // Enregistrer un Trade pour le test
-        Trade savedTrade = tradeRepository.save(testTrade);
+        Trade savedTrade = tradeService.save(testTrade);
         int id = savedTrade.getTradeId();
 
         // Effectuer une requête GET sur /trade/delete/{id}
@@ -149,7 +149,7 @@ public class TradeControllerTests {
                 .andExpect(redirectedUrl("/trade/list"));
 
         // Vérifier que le Trade a été supprimé
-        assertFalse(tradeRepository.existsById(id));
+        assertFalse(tradeService.existsById(id));
     }
 
 }

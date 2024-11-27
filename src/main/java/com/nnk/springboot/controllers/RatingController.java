@@ -1,7 +1,8 @@
 package com.nnk.springboot.controllers;
 
+import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.RatingRepository;
+import com.nnk.springboot.service.RatingService;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,19 +19,19 @@ import java.util.List;
 public class RatingController {
 
 
-    private final RatingRepository ratingRepository;
+    private final RatingService ratingService;
 
-    private static final Logger logger = LogManager.getLogger(RatingRepository.class);
+    private static final Logger logger = LogManager.getLogger(RatingService.class);
 
-    public RatingController(RatingRepository ratingRepository) {
-        this.ratingRepository = ratingRepository;
+    public RatingController(RatingService ratingService) {
+        this.ratingService = ratingService;
     }
 
     // Fait
     @RequestMapping("/rating/list")
     public String home(Model model) {
 
-        List<Rating> ratingList = ratingRepository.findAll();
+        List<Rating> ratingList = ratingService.findAll();
         model.addAttribute("ratings", ratingList);
         return "rating/list";
     }
@@ -51,7 +52,7 @@ public class RatingController {
         if (result.hasErrors()) {
             return "rating/add";
         }
-        ratingRepository.save(rating);
+        ratingService.save(rating);
         return "redirect:/rating/list";
     }
 
@@ -59,7 +60,7 @@ public class RatingController {
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
-        Rating rating = ratingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid rating id: " + id));
+        Rating rating = ratingService.findById(id);
         model.addAttribute("rating", rating);
         return "rating/update";
     }
@@ -70,13 +71,17 @@ public class RatingController {
         if (result.hasErrors()) {
             return "rating/update";
         }
-        ratingRepository.save(rating);
+        ratingService.save(rating);
         return "redirect:/rating/list";
     }
 
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") Integer id, Model model) {
-        ratingRepository.deleteById(id);
+
+        ratingService.delete(ratingService.findById(id));
+        List<Rating> ratingList = ratingService.findAll();
+        model.addAttribute("ratings", ratingList);
+
         return "redirect:/rating/list";
     }
 }

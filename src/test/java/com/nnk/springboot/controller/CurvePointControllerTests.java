@@ -1,7 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.repositories.CurvePointRepository;
+import com.nnk.springboot.service.CurvePointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ public class CurvePointControllerTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private CurvePointRepository curvePointRepository;
+    private CurvePointService curvePointService;
 
     private MockMvc mockMvc;
 
@@ -65,7 +65,7 @@ public class CurvePointControllerTests {
     public void testShowCurvePointListPage() throws Exception {
 
         // Enregistrer un CurvePoint pour le test
-        curvePointRepository.save(testCurvePoint);
+        curvePointService.save(testCurvePoint);
 
         mockMvc.perform(get("/curvePoint/list"))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ public class CurvePointControllerTests {
                 .andExpect(redirectedUrl("/curvePoint/list"));
 
         // Vérifier que le CurvePoint a été ajouté en base de données
-        List<CurvePoint> curvePoints = curvePointRepository.findAll();
+        List<CurvePoint> curvePoints = curvePointService.findAll();
         assertThat(curvePoints, hasItem(hasProperty("value", is(20.0))));
     }
 
@@ -105,7 +105,7 @@ public class CurvePointControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un CurvePoint pour le test
-        CurvePoint savedCurvePoint = curvePointRepository.save(testCurvePoint);
+        CurvePoint savedCurvePoint = curvePointService.save(testCurvePoint);
 
         // Effectuer une requête GET sur /curvePoint/update/{id}
         mockMvc.perform(get("/curvePoint/update/" + savedCurvePoint.getId()))
@@ -119,7 +119,7 @@ public class CurvePointControllerTests {
     @WithMockUser
     public void testUpdateCurvePoint() throws Exception {
         // Enregistrer un CurvePoint pour le test
-        CurvePoint savedCurvePoint = curvePointRepository.save(testCurvePoint);
+        CurvePoint savedCurvePoint = curvePointService.save(testCurvePoint);
 
         // Effectuer une requête POST sur /curvePoint/update/{id} avec des données mises à jour
         mockMvc.perform(post("/curvePoint/update/" + savedCurvePoint.getId())
@@ -131,7 +131,7 @@ public class CurvePointControllerTests {
                 .andExpect(redirectedUrl("/curvePoint/list"));
 
         // Vérifier que le CurvePoint a été mis à jour
-        CurvePoint updatedCurvePoint = curvePointRepository.findById(savedCurvePoint.getId()).orElse(null);
+        CurvePoint updatedCurvePoint = curvePointService.findById(savedCurvePoint.getId());
         assertNotNull(updatedCurvePoint);
         assertThat(updatedCurvePoint.getValue(), is(11.0));
     }
@@ -140,7 +140,7 @@ public class CurvePointControllerTests {
     @WithMockUser
     public void testDeleteCurvePoint() throws Exception {
         // Enregistrer un CurvePoint pour le test
-        CurvePoint savedCurvePoint = curvePointRepository.save(testCurvePoint);
+        CurvePoint savedCurvePoint = curvePointService.save(testCurvePoint);
         int id = savedCurvePoint.getId();
 
         // Effectuer une requête GET sur /curvePoint/delete/{id}
@@ -149,7 +149,7 @@ public class CurvePointControllerTests {
                 .andExpect(redirectedUrl("/curvePoint/list"));
 
         // Vérifier que le CurvePoint a été supprimé
-        assertFalse(curvePointRepository.existsById(id));
+        assertFalse(curvePointService.existsById(id));
     }
 
 }

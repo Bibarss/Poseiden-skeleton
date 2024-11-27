@@ -1,16 +1,14 @@
 package com.nnk.springboot.config;
 
 
-import com.nnk.springboot.controllers.BidListController;
+
 import com.nnk.springboot.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,8 +30,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login", "/register").permitAll()  // Autoriser l'accès public à ces routes
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN") // Admin seulement
+                        .requestMatchers("/login").permitAll()  // Autoriser l'accès public à ces routes
+                        .requestMatchers("/user/**").hasAuthority("ADMIN") // Admin seulement
                         .anyRequest().authenticated()  // Toutes les autres pages nécessitent une authentification
                 )
                 .formLogin(formLogin -> formLogin

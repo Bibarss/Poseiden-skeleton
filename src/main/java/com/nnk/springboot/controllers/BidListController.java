@@ -1,11 +1,11 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.BidListRepository;
-import com.nnk.springboot.repositories.RatingRepository;
+import com.nnk.springboot.service.BidListService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,19 +22,20 @@ import java.util.List;
 @Controller
 public class BidListController {
 
-    private final BidListRepository bidListRepository;
+    private final BidListService bidListService;
 
     private static final Logger logger = LogManager.getLogger(BidListController.class);
 
-    public BidListController(BidListRepository bidListRepository) {
-        this.bidListRepository = bidListRepository;
+    public BidListController(BidListService bidListService) {
+        this.bidListService = bidListService;
     }
+
 
     @RequestMapping("/bidList/list")
     public String home(Model model)
     {
 
-        List<BidList> bidListList = bidListRepository.findAll();
+        List<BidList> bidListList = bidListService.findAll();
         model.addAttribute("bidLists", bidListList);
         return "bidList/list";
     }
@@ -52,13 +53,13 @@ public class BidListController {
             return "bidList/add";
         }
 
-        bidListRepository.save(bidList);
+        bidListService.save(bidList);
         return "redirect:/bidList/list";
     }
 
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
-        BidList bidList = bidListRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid bidList id: " + id));
+        BidList bidList = bidListService.findById(id);
         model.addAttribute("bidList", bidList);
         return "bidList/update";
     }
@@ -70,13 +71,17 @@ public class BidListController {
         if (result.hasErrors()) {
             return "bidList/update";
         }
-        bidListRepository.save(bidList);
+        bidListService.save(bidList);
         return "redirect:/bidList/list";
     }
 
     @GetMapping("/bidList/delete/{id}")
     public String deleteBid(@PathVariable("id") Integer id, Model model) {
-        bidListRepository.deleteById(id);
+
+        bidListService.delete(bidListService.findById(id));
+        List<BidList> bidListList = bidListService.findAll();
+        model.addAttribute("bidLists", bidListList);
+
         return "redirect:/bidList/list";
     }
 }

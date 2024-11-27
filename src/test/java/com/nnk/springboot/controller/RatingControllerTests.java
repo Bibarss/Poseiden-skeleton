@@ -2,7 +2,7 @@ package com.nnk.springboot.controller;
 
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.RatingRepository;
+import com.nnk.springboot.service.RatingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class RatingControllerTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private RatingRepository ratingRepository;
+    private RatingService ratingService;
 
     private MockMvc mockMvc;
 
@@ -67,7 +67,7 @@ public class RatingControllerTests {
     public void testShowRatingListPage() throws Exception {
 
         // Enregistrer un Rating pour le test
-        ratingRepository.save(testRating);
+        ratingService.save(testRating);
 
         mockMvc.perform(get("/rating/list"))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ public class RatingControllerTests {
                 .andExpect(redirectedUrl("/rating/list"));
 
         // Vérifier que le Rating a été ajouté en base de données
-        List<Rating> ratings = ratingRepository.findAll();
+        List<Rating> ratings = ratingService.findAll();
         assertThat(ratings, hasItem(hasProperty("moodysRating", is("22"))));
     }
 
@@ -108,7 +108,7 @@ public class RatingControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un Rating pour le test
-        Rating savedRating = ratingRepository.save(testRating);
+        Rating savedRating = ratingService.save(testRating);
 
         // Effectuer une requête GET sur /rating/update/{id}
         mockMvc.perform(get("/rating/update/" + savedRating.getId()))
@@ -122,7 +122,7 @@ public class RatingControllerTests {
     @WithMockUser
     public void testUpdateRating() throws Exception {
         // Enregistrer un Rating pour le test
-        Rating savedRating = ratingRepository.save(testRating);
+        Rating savedRating = ratingService.save(testRating);
 
         // Effectuer une requête POST sur /rating/update/{id} avec des données mises à jour
         mockMvc.perform(post("/rating/update/" + savedRating.getId())
@@ -135,7 +135,7 @@ public class RatingControllerTests {
                 .andExpect(redirectedUrl("/rating/list"));
 
         // Vérifier que le Rating a été mis à jour
-        Rating updatedRating = ratingRepository.findById(savedRating.getId()).orElse(null);
+        Rating updatedRating = ratingService.findById(savedRating.getId());
         assertNotNull(updatedRating);
         assertThat(updatedRating.getMoodysRating(), is("3"));
     }
@@ -144,7 +144,7 @@ public class RatingControllerTests {
     @WithMockUser
     public void testDeleteRating() throws Exception {
         // Enregistrer un Rating pour le test
-        Rating savedRating = ratingRepository.save(testRating);
+        Rating savedRating = ratingService.save(testRating);
         int id = savedRating.getId();
 
         // Effectuer une requête GET sur /rating/delete/{id}
@@ -153,7 +153,7 @@ public class RatingControllerTests {
                 .andExpect(redirectedUrl("/rating/list"));
 
         // Vérifier que le Rating a été supprimé
-        assertFalse(ratingRepository.existsById(id));
+        assertFalse(ratingService.existsById(id));
     }
 
 }

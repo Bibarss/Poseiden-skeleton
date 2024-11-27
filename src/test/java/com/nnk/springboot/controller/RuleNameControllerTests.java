@@ -1,7 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.repositories.RuleNameRepository;
+import com.nnk.springboot.service.RuleNameService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class RuleNameControllerTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private RuleNameRepository ruleNameRepository;
+    private RuleNameService ruleNameService;
 
     private MockMvc mockMvc;
 
@@ -70,7 +70,7 @@ public class RuleNameControllerTests {
     public void testShowRuleNameListPage() throws Exception {
 
         // Enregistrer un RuleName pour le test
-        ruleNameRepository.save(testRuleName);
+        ruleNameService.save(testRuleName);
 
         mockMvc.perform(get("/ruleName/list"))
                 .andExpect(status().isOk())
@@ -103,7 +103,7 @@ public class RuleNameControllerTests {
                 .andExpect(redirectedUrl("/ruleName/list"));
 
         // Vérifier que le RuleName a été ajouté en base de données
-        List<RuleName> ruleNames = ruleNameRepository.findAll();
+        List<RuleName> ruleNames = ruleNameService.findAll();
         assertThat(ruleNames, hasItem(hasProperty("name", is("Rule Name2"))));
     }
 
@@ -113,7 +113,7 @@ public class RuleNameControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un RuleName pour le test
-        RuleName savedRuleName = ruleNameRepository.save(testRuleName);
+        RuleName savedRuleName = ruleNameService.save(testRuleName);
 
         // Effectuer une requête GET sur /ruleName/update/{id}
         mockMvc.perform(get("/ruleName/update/" + savedRuleName.getId()))
@@ -127,7 +127,7 @@ public class RuleNameControllerTests {
     @WithMockUser
     public void testUpdateRuleName() throws Exception {
         // Enregistrer un RuleName pour le test
-        RuleName savedRuleName = ruleNameRepository.save(testRuleName);
+        RuleName savedRuleName = ruleNameService.save(testRuleName);
 
         // Effectuer une requête POST sur /ruleName/update/{id} avec des données mises à jour
         mockMvc.perform(post("/ruleName/update/" + savedRuleName.getId())
@@ -142,7 +142,7 @@ public class RuleNameControllerTests {
                 .andExpect(redirectedUrl("/ruleName/list"));
 
         // Vérifier que le RuleName a été mis à jour
-        RuleName updatedRuleName = ruleNameRepository.findById(savedRuleName.getId()).orElse(null);
+        RuleName updatedRuleName = ruleNameService.findById(savedRuleName.getId());
         assertNotNull(updatedRuleName);
         assertThat(updatedRuleName.getName(), is("Rule Name22"));
     }
@@ -151,7 +151,7 @@ public class RuleNameControllerTests {
     @WithMockUser
     public void testDeleteRuleName() throws Exception {
         // Enregistrer un RuleName pour le test
-        RuleName savedRuleName = ruleNameRepository.save(testRuleName);
+        RuleName savedRuleName = ruleNameService.save(testRuleName);
         int id = savedRuleName.getId();
 
         // Effectuer une requête GET sur /ruleName/delete/{id}
@@ -160,7 +160,7 @@ public class RuleNameControllerTests {
                 .andExpect(redirectedUrl("/ruleName/list"));
 
         // Vérifier que le RuleName a été supprimé
-        assertFalse(ruleNameRepository.existsById(id));
+        assertFalse(ruleNameService.existsById(id));
     }
 
 }

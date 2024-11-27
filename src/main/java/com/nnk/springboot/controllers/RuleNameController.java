@@ -1,8 +1,9 @@
 package com.nnk.springboot.controllers;
 
-import com.nnk.springboot.domain.Rating;
+
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.repositories.RuleNameRepository;
+import com.nnk.springboot.service.RuleNameService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,18 +23,18 @@ import java.util.List;
 @Controller
 public class RuleNameController {
 
-    private final RuleNameRepository ruleNameRepository;
+    private final RuleNameService ruleNameService;
     private static final Logger logger = LogManager.getLogger(RuleNameController.class);
 
-    public RuleNameController(RuleNameRepository ruleNameRepository) {
-        this.ruleNameRepository = ruleNameRepository;
+    public RuleNameController(RuleNameService ruleNameService) {
+        this.ruleNameService = ruleNameService;
     }
 
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
 
         logger.info("Affichage du tableau des ruleName.");
-        List<RuleName> ruleNameList = ruleNameRepository.findAll();
+        List<RuleName> ruleNameList = ruleNameService.findAll();
         model.addAttribute("ruleNames", ruleNameList);
 
         return "ruleName/list";
@@ -52,7 +53,7 @@ public class RuleNameController {
         if (result.hasErrors()) {
             return "ruleName/add";
         }
-        ruleNameRepository.save(ruleName);
+        ruleNameService.save(ruleName);
         return "redirect:/ruleName/list";
 
     }
@@ -60,7 +61,7 @@ public class RuleNameController {
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
 
-        RuleName ruleName = ruleNameRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid ruleName id: " + id));
+        RuleName ruleName = ruleNameService.findById(id);
         model.addAttribute("ruleName", ruleName);
         return "ruleName/update";
     }
@@ -71,13 +72,17 @@ public class RuleNameController {
         if (result.hasErrors()) {
             return "ruleName/update";
         }
-        ruleNameRepository.save(ruleName);
+        ruleNameService.save(ruleName);
         return "redirect:/ruleName/list";
     }
 
     @GetMapping("/ruleName/delete/{id}")
     public String deleteRuleName(@PathVariable("id") Integer id, Model model) {
-        ruleNameRepository.deleteById(id);
+
+        ruleNameService.delete(ruleNameService.findById(id));
+        List<RuleName> ruleNameList = ruleNameService.findAll();
+        model.addAttribute("ruleNames", ruleNameList);
+
         return "redirect:/ruleName/list";
     }
 }

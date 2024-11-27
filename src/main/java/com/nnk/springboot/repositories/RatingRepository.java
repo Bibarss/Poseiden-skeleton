@@ -8,10 +8,4 @@ import java.util.Optional;
 
 public interface RatingRepository extends JpaRepository<Rating, Integer> {
 
-    List<Rating> findAll();
-
-    Optional<Rating> findById(Integer Id);
-
-    void deleteById(Integer Id);
-
 }

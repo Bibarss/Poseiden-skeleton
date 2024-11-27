@@ -1,7 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.repositories.BidListRepository;
+import com.nnk.springboot.service.BidListService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ public class BidListControllerTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private BidListRepository bidListRepository;
+    private BidListService bidListService;
 
     private MockMvc mockMvc;
 
@@ -66,7 +66,7 @@ public class BidListControllerTests {
     public void testShowBidListListPage() throws Exception {
 
         // Enregistrer un BidList pour le test
-        bidListRepository.save(testBidList);
+        bidListService.save(testBidList);
 
         mockMvc.perform(get("/bidList/list"))
                 .andExpect(status().isOk())
@@ -90,13 +90,13 @@ public class BidListControllerTests {
         mockMvc.perform(post("/bidList/validate")
                         .param("account", "Account Test2")
                         .param("type", "type Test2")
-                        .param("bidQuantity", "2O.0")
+                        .param("bidQuantity", "20.0")
                         .with(csrf())) // Si la protection CSRF est activée
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/bidList/list"));
 
         // Vérifier que le BidList a été ajouté en base de données
-        List<BidList> bidLists = bidListRepository.findAll();
+        List<BidList> bidLists = bidListService.findAll();
         assertThat(bidLists, hasItem(hasProperty("account", is("Account Test2"))));
     }
 
@@ -106,7 +106,7 @@ public class BidListControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un BidList pour le test
-        BidList savedBidList = bidListRepository.save(testBidList);
+        BidList savedBidList = bidListService.save(testBidList);
 
         // Effectuer une requête GET sur /bidList/update/{id}
         mockMvc.perform(get("/bidList/update/" + savedBidList.getId()))
@@ -120,19 +120,19 @@ public class BidListControllerTests {
     @WithMockUser
     public void testUpdateBidList() throws Exception {
         // Enregistrer un BidList pour le test
-        BidList savedBidList = bidListRepository.save(testBidList);
+        BidList savedBidList = bidListService.save(testBidList);
 
         // Effectuer une requête POST sur /bidList/update/{id} avec des données mises à jour
         mockMvc.perform(post("/bidList/update/" + savedBidList.getId())
                         .param("account", "Account Test3")
                         .param("type", "type Test")
-                        .param("bidQuantity", "2O.0")
+                        .param("bidQuantity", "20.0")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/bidList/list"));
 
         // Vérifier que le BidList a été mis à jour
-        BidList updatedBidList = bidListRepository.findById(savedBidList.getId()).orElse(null);
+        BidList updatedBidList = bidListService.findById(savedBidList.getId());
         assertNotNull(updatedBidList);
         assertThat(updatedBidList.getAccount(), is("Account Test3"));
     }
@@ -141,7 +141,7 @@ public class BidListControllerTests {
     @WithMockUser
     public void testDeleteBidList() throws Exception {
         // Enregistrer un BidList pour le test
-        BidList savedBidList = bidListRepository.save(testBidList);
+        BidList savedBidList = bidListService.save(testBidList);
         int id = savedBidList.getId();
 
         // Effectuer une requête GET sur /bidList/delete/{id}
@@ -150,7 +150,7 @@ public class BidListControllerTests {
                 .andExpect(redirectedUrl("/bidList/list"));
 
         // Vérifier que le BidList a été supprimé
-        assertFalse(bidListRepository.existsById(id));
+        assertFalse(bidListService.existsById(id));
     }
 
 }

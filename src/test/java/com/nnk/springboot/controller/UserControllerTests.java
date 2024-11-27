@@ -1,7 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ public class UserControllerTests {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     private MockMvc mockMvc;
 
@@ -73,7 +73,7 @@ public class UserControllerTests {
     public void testShowUserListPage() throws Exception {
 
         // Enregistrer un User pour le test
-        userRepository.save(testUser);
+        userService.save(testUser);
 
         mockMvc.perform(get("/user/list"))
                 .andExpect(status().isOk())
@@ -107,7 +107,7 @@ public class UserControllerTests {
                 .andExpect(redirectedUrl("/user/list"));
 
         // Vérifier que le User a été ajouté en base de données
-        List<User> users = userRepository.findAll();
+        List<User> users = userService.findAll();
         assertThat(users, hasItem(hasProperty("username", is("Toto"))));
     }
 
@@ -117,7 +117,7 @@ public class UserControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un User pour le test
-        User savedUser = userRepository.save(testUser);
+        User savedUser = userService.save(testUser);
 
         // Effectuer une requête GET sur /user/update/{id}
         mockMvc.perform(get("/user/update/" + savedUser.getId()))
@@ -131,7 +131,7 @@ public class UserControllerTests {
     @WithMockUser
     public void testUpdateUser() throws Exception {
         // Enregistrer un User pour le test
-        User savedUser = userRepository.save(testUser);
+        User savedUser = userService.save(testUser);
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String pw = encoder.encode("78910");
@@ -147,7 +147,7 @@ public class UserControllerTests {
                 .andExpect(redirectedUrl("/user/list"));
 
         // Vérifier que le User a été mis à jour
-        User updatedUser = userRepository.findById(savedUser.getId()).orElse(null);
+        User updatedUser = userService.findById(savedUser.getId());
         assertNotNull(updatedUser);
         assertThat(updatedUser.getFullname(), is("TOTO Titi"));
     }
@@ -156,7 +156,7 @@ public class UserControllerTests {
     @WithMockUser
     public void testDeleteUser() throws Exception {
         // Enregistrer un User pour le test
-        User savedUser = userRepository.save(testUser);
+        User savedUser = userService.save(testUser);
         int id = savedUser.getId();
 
         // Effectuer une requête GET sur /user/delete/{id}
@@ -165,7 +165,7 @@ public class UserControllerTests {
                 .andExpect(redirectedUrl("/user/list"));
 
         // Vérifier que le User a été supprimé
-        assertFalse(userRepository.existsById(id));
+        assertFalse(userService.existsById(id));
     }
 
 }

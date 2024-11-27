@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface RuleNameRepository extends JpaRepository<RuleName, Integer> {
 
-    List<RuleName> findAll();
 }

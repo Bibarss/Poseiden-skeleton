@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BidListController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">spring-boot-skeleton</a> &gt; <a href="index.source.html" class="el_package">com.nnk.springboot.controllers</a> &gt; <span class="el_source">BidListController.java</span></div><h1>BidListController.java</h1><pre class="source lang-java linenums">package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.BidListRepository;
-import com.nnk.springboot.repositories.RatingRepository;
+import com.nnk.springboot.service.BidListService;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,53 +22,67 @@ import java.util.List;
 @Controller
 public class BidListController {
 
-    private final BidListRepository bidListRepository;
+    private final BidListService bidListService;
 
 <span class="fc" id="L27">    private static final Logger logger = LogManager.getLogger(BidListController.class);</span>
 
-<span class="fc" id="L29">    public BidListController(BidListRepository bidListRepository) {</span>
-<span class="fc" id="L30">        this.bidListRepository = bidListRepository;</span>
+<span class="fc" id="L29">    public BidListController(BidListService bidListService) {</span>
+<span class="fc" id="L30">        this.bidListService = bidListService;</span>
 <span class="fc" id="L31">    }</span>
+
 
     @RequestMapping(&quot;/bidList/list&quot;)
     public String home(Model model)
     {
 
-<span class="fc" id="L37">        List&lt;BidList&gt; bidListList = bidListRepository.findAll();</span>
-<span class="fc" id="L38">        model.addAttribute(&quot;bidLists&quot;, bidListList);</span>
-<span class="fc" id="L39">        return &quot;bidList/list&quot;;</span>
+<span class="fc" id="L38">        List&lt;BidList&gt; bidListList = bidListService.findAll();</span>
+<span class="fc" id="L39">        model.addAttribute(&quot;bidLists&quot;, bidListList);</span>
+<span class="fc" id="L40">        return &quot;bidList/list&quot;;</span>
     }
 
     @GetMapping(&quot;/bidList/add&quot;)
     public String addBidForm(Model model) {
-<span class="fc" id="L44">        model.addAttribute(&quot;bidList&quot;, new BidList());</span>
-<span class="fc" id="L45">        return &quot;bidList/add&quot;;</span>
+<span class="fc" id="L45">        model.addAttribute(&quot;bidList&quot;, new BidList());</span>
+<span class="fc" id="L46">        return &quot;bidList/add&quot;;</span>
     }
 
     @PostMapping(&quot;/bidList/validate&quot;)
     public String validate(@Valid BidList bidList, BindingResult result, Model model) {
-<span class="fc" id="L50">        bidListRepository.save(bidList);</span>
-<span class="fc" id="L51">        return &quot;redirect:/bidList/list&quot;;</span>
+
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
+<span class="fc" id="L53">            return &quot;bidList/add&quot;;</span>
+        }
+
+<span class="fc" id="L56">        bidListService.save(bidList);</span>
+<span class="fc" id="L57">        return &quot;redirect:/bidList/list&quot;;</span>
     }
 
     @GetMapping(&quot;/bidList/update/{id}&quot;)
     public String showUpdateForm(@PathVariable(&quot;id&quot;) Integer id, Model model) {
-<span class="pc" id="L56">        BidList bidList = bidListRepository.findById(id).orElseThrow(() -&gt; new IllegalArgumentException(&quot;Invalid bidList id: &quot; + id));</span>
-<span class="fc" id="L57">        model.addAttribute(&quot;bidList&quot;, bidList);</span>
-<span class="fc" id="L58">        return &quot;bidList/update&quot;;</span>
+<span class="fc" id="L62">        BidList bidList = bidListService.findById(id);</span>
+<span class="fc" id="L63">        model.addAttribute(&quot;bidList&quot;, bidList);</span>
+<span class="fc" id="L64">        return &quot;bidList/update&quot;;</span>
     }
 
     @PostMapping(&quot;/bidList/update/{id}&quot;)
     public String updateBid(@PathVariable(&quot;id&quot;) Integer id, @Valid BidList bidList,
                              BindingResult result, Model model) {
-<span class="fc" id="L64">        bidListRepository.save(bidList);</span>
-<span class="fc" id="L65">        return &quot;redirect:/bidList/list&quot;;</span>
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
+<span class="fc" id="L72">            return &quot;bidList/update&quot;;</span>
+        }
+<span class="fc" id="L74">        bidListService.save(bidList);</span>
+<span class="fc" id="L75">        return &quot;redirect:/bidList/list&quot;;</span>
     }
 
     @GetMapping(&quot;/bidList/delete/{id}&quot;)
     public String deleteBid(@PathVariable(&quot;id&quot;) Integer id, Model model) {
-<span class="fc" id="L70">        bidListRepository.deleteById(id);</span>
-<span class="fc" id="L71">        return &quot;redirect:/bidList/list&quot;;</span>
+
+<span class="fc" id="L81">        bidListService.delete(bidListService.findById(id));</span>
+<span class="fc" id="L82">        List&lt;BidList&gt; bidListList = bidListService.findAll();</span>
+<span class="fc" id="L83">        model.addAttribute(&quot;bidLists&quot;, bidListList);</span>
+
+<span class="fc" id="L85">        return &quot;redirect:/bidList/list&quot;;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

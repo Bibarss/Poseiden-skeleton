@@ -21,4 +21,9 @@ C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\repositori
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\repositories\RuleNameRepository.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\repositories\TradeRepository.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\repositories\UserRepository.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\BidListService.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\CurvePointService.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\RatingService.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\RuleNameService.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\TradeService.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\UserService.java
