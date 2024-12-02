@@ -6,34 +6,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class TradeService {
 
-    private final TradeRepository tradeRepository;
+public interface TradeService {
 
-    public TradeService(TradeRepository tradeRepository) {
-        this.tradeRepository = tradeRepository;
-    }
+    public List<Trade> findAll() ;
 
-    public List<Trade> findAll() {
-        return tradeRepository.findAll();
-    }
+    public Trade findById(Integer id) ;
 
-    public Trade findById(Integer id) {
-        return tradeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Trade Id:" + id));
-    }
+    public Trade save(Trade trade) ;
 
-    public Trade save(Trade trade) {
-        return tradeRepository.save(trade);
-    }
+    public void delete(Trade trade) ;
 
-    public void delete(Trade trade) {
-        tradeRepository.deleteById(trade.getTradeId());
-    }
-
-    public boolean existsById(int id) {
-        return tradeRepository.existsById(id);
-    }
+    public boolean existsById(int id) ;
 }
 

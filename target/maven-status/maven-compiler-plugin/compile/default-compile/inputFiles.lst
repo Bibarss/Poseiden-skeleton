@@ -23,6 +23,13 @@ C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\repositori
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\repositories\UserRepository.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\BidListService.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\CurvePointService.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\BidListServiceImpl.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\CurvePointServiceImpl.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\CustomUserDetailsService.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\RatingServiceImpl.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\RuleNameServiceImpl.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\TradeServiceImpl.java
+C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\impl\UserServiceImpl.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\RatingService.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\RuleNameService.java
 C:\Perso\Formation\Poseiden-skeleton\src\main\java\com\nnk\springboot\service\TradeService.java

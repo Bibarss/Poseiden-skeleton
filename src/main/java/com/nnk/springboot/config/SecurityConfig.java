@@ -3,6 +3,7 @@ package com.nnk.springboot.config;
 
 
 import com.nnk.springboot.service.UserService;
+import com.nnk.springboot.service.impl.CustomUserDetailsService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
@@ -19,12 +20,13 @@ public class SecurityConfig {
     private static final Logger logger = LogManager.getLogger(SecurityConfig.class);
 
     private final CustomAuthenticationSuccessHandler successHandler;
-    private final UserService userService;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, UserService userService) {
+    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, CustomUserDetailsService customUserDetailsService) {
         this.successHandler = successHandler;
-        this.userService = userService;
+        this.customUserDetailsService = customUserDetailsService;
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,7 +49,7 @@ public class SecurityConfig {
                             .deleteCookies("JSESSIONID") // Supprime les cookies de session
                             .permitAll();
                 })
-                .userDetailsService(userService); // Utiliser le userService injecté
+                .userDetailsService(customUserDetailsService); // Utiliser le userService injecté
 
 
         return http.build();
@@ -56,7 +58,7 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
+        authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

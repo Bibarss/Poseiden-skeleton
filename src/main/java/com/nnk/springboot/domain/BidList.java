@@ -1,7 +1,5 @@
 package com.nnk.springboot.domain;
 
-//import org.springframework.beans.factory.annotation.Required;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;

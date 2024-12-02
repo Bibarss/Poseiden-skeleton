@@ -49,8 +49,8 @@ public class BidListController {
     @PostMapping(&quot;/bidList/validate&quot;)
     public String validate(@Valid BidList bidList, BindingResult result, Model model) {
 
-<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
-<span class="fc" id="L53">            return &quot;bidList/add&quot;;</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L53">            return &quot;bidList/add&quot;;</span>
         }
 
 <span class="fc" id="L56">        bidListService.save(bidList);</span>
@@ -68,8 +68,8 @@ public class BidListController {
     public String updateBid(@PathVariable(&quot;id&quot;) Integer id, @Valid BidList bidList,
                              BindingResult result, Model model) {
 
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (result.hasErrors()) {</span>
-<span class="fc" id="L72">            return &quot;bidList/update&quot;;</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (result.hasErrors()) {</span>
+<span class="nc" id="L72">            return &quot;bidList/update&quot;;</span>
         }
 <span class="fc" id="L74">        bidListService.save(bidList);</span>
 <span class="fc" id="L75">        return &quot;redirect:/bidList/list&quot;;</span>

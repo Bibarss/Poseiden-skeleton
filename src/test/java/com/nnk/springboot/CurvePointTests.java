@@ -36,16 +36,16 @@ public class CurvePointTests {
 		// Save
 		curvePoint = curvePointRepository.save(curvePoint);
 		assertNotNull(curvePoint.getId());
-		assertTrue(curvePoint.getCurveId() == 10);
+        assertEquals(10, (int) curvePoint.getCurveId());
 
 		// Update
 		curvePoint.setCurveId(20);
 		curvePoint = curvePointRepository.save(curvePoint);
-		assertTrue(curvePoint.getCurveId() == 20);
+        assertEquals(20, (int) curvePoint.getCurveId());
 
 		// Find
 		List<CurvePoint> listResult = curvePointRepository.findAll();
-		assertTrue(listResult.size() > 0);
+        assertFalse(listResult.isEmpty());
 
 		// Delete
 		Integer id = curvePoint.getId();
