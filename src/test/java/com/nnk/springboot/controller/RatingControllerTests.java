@@ -2,7 +2,7 @@ package com.nnk.springboot.controller;
 
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.service.RatingService;
+import com.nnk.springboot.services.RatingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +67,7 @@ public class RatingControllerTests {
     public void testShowRatingListPage() throws Exception {
 
         // Enregistrer un Rating pour le test
-        ratingService.save(testRating);
+        ratingService.insert(testRating);
 
         mockMvc.perform(get("/rating/list"))
                 .andExpect(status().isOk())
@@ -98,7 +98,7 @@ public class RatingControllerTests {
                 .andExpect(redirectedUrl("/rating/list"));
 
         // Vérifier que le Rating a été ajouté en base de données
-        List<Rating> ratings = ratingService.findAll();
+        List<Rating> ratings = ratingService.findAllRating();
         assertThat(ratings, hasItem(hasProperty("moodysRating", is("22"))));
     }
 
@@ -108,7 +108,7 @@ public class RatingControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un Rating pour le test
-        Rating savedRating = ratingService.save(testRating);
+        Rating savedRating = ratingService.insert(testRating);
 
         // Effectuer une requête GET sur /rating/update/{id}
         mockMvc.perform(get("/rating/update/" + savedRating.getId()))
@@ -122,20 +122,20 @@ public class RatingControllerTests {
     @WithMockUser
     public void testUpdateRating() throws Exception {
         // Enregistrer un Rating pour le test
-        Rating savedRating = ratingService.save(testRating);
+        Rating savedRating = ratingService.insert(testRating);
 
         // Effectuer une requête POST sur /rating/update/{id} avec des données mises à jour
         mockMvc.perform(post("/rating/update/" + savedRating.getId())
-                .param("moodysRating", "3")
-                .param("sandPRating", "1")
-                .param("fitchRating", "1")
-                .param("orderNumber", "1")
-                .with(csrf()))
+                        .param("moodysRating", "3")
+                        .param("sandPRating", "1")
+                        .param("fitchRating", "1")
+                        .param("orderNumber", "1")
+                        .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/rating/list"));
 
         // Vérifier que le Rating a été mis à jour
-        Rating updatedRating = ratingService.findById(savedRating.getId());
+        Rating updatedRating = ratingService.findRating(savedRating.getId());
         assertNotNull(updatedRating);
         assertThat(updatedRating.getMoodysRating(), is("3"));
     }
@@ -144,7 +144,7 @@ public class RatingControllerTests {
     @WithMockUser
     public void testDeleteRating() throws Exception {
         // Enregistrer un Rating pour le test
-        Rating savedRating = ratingService.save(testRating);
+        Rating savedRating = ratingService.insert(testRating);
         int id = savedRating.getId();
 
         // Effectuer une requête GET sur /rating/delete/{id}

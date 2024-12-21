@@ -1,6 +1,6 @@
 
-CREATE TABLE BidList (
-  id tinyint(4) NOT NULL AUTO_INCREMENT,
+CREATE TABLE Bidlist (
+  bid_List_id tinyint(4) NOT NULL AUTO_INCREMENT,
   account VARCHAR(30) NOT NULL,
   type VARCHAR(30) NOT NULL,
   bid_quantity DOUBLE,
@@ -23,8 +23,8 @@ CREATE TABLE BidList (
   source_list_id VARCHAR(125),
   side VARCHAR(125),
 
-  PRIMARY KEY (id)
-)
+  PRIMARY KEY (bid_list_id)
+);
 
 CREATE TABLE Trade (
   trade_id tinyint(4) NOT NULL AUTO_INCREMENT,
@@ -50,7 +50,8 @@ CREATE TABLE Trade (
   side VARCHAR(125),
 
   PRIMARY KEY (trade_id)
-)
+);
+
 CREATE TABLE CurvePoint (
   id tinyint(4) NOT NULL AUTO_INCREMENT,
   curve_id tinyint,
@@ -60,7 +61,7 @@ CREATE TABLE CurvePoint (
   creation_date TIMESTAMP ,
 
   PRIMARY KEY (id)
-)
+);
 
 
 CREATE TABLE Rating (
@@ -71,7 +72,7 @@ CREATE TABLE Rating (
   order_number tinyint,
 
   PRIMARY KEY (id)
-)
+);
 
 CREATE TABLE RuleName (
   id tinyint(4) NOT NULL AUTO_INCREMENT,
@@ -83,7 +84,7 @@ CREATE TABLE RuleName (
   sql_part VARCHAR(125),
 
   PRIMARY KEY (Id)
-)
+);
 
 CREATE TABLE Users (
   id tinyint(4) NOT NULL AUTO_INCREMENT,
@@ -93,7 +94,7 @@ CREATE TABLE Users (
   role VARCHAR(125),
 
   PRIMARY KEY (Id)
-)
+);
 
-insert into Users(fullname, username, password, role) values("Administrator", "admin", "$2a$10$79bTWepb.v2sKYrFrL5PT.UU90HwrplKfjBnF92bOUoLB6I94LgCS", "ADMIN")
-insert into Users(fullname, username, password, role) values("User", "user", "$2a$10$JRe604YPPx7Ewy6/PK.UCeEyiIDY13grNnzXFuKPVhK0VpFOyhkPG", "USER")
+insert into Users(fullname, username, password, role) values("Administrator", "admin", "$2a$10$79bTWepb.v2sKYrFrL5PT.UU90HwrplKfjBnF92bOUoLB6I94LgCS", "ADMIN");
+insert into Users(fullname, username, password, role) values("User", "user", "$2a$10$JRe604YPPx7Ewy6/PK.UCeEyiIDY13grNnzXFuKPVhK0VpFOyhkPG", "USER");

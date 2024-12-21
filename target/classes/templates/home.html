@@ -1,49 +1,13 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Accueil</title>
-    <link rel="stylesheet" href="/css/styles.css"/>
+    <title> Spring Boot </title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" >
 </head>
 <body>
-<h3>PAGE D'ACCUEIL</h3>
-
-<div th:if="${#httpServletRequest.remoteUser == null}">
-    <h4>Connexion</h4>
-    <form th:action="@{/login}" method="post">
-        <div>
-            <label for="username">Nom d'utilisateur :</label>
-            <input type="text" id="username" name="username" />
-        </div>
-        <div>
-            <label for="password">Mot de passe :</label>
-            <input type="password" id="password" name="password" />
-        </div>
-        <div>
-            <button type="submit">Se connecter</button>
-        </div>
-    </form>
-</div>
-
-<div th:if="${#httpServletRequest.remoteUser != null}">
-    <div class="col-6 text-right">
-        Logged in user: <b th:inline="text"  class="user"> [[${#httpServletRequest.remoteUser}]] </b>
-        <form th:action="@{/app-logout}" method="POST">
-            <input type="submit" value="Logout"/>
-        </form>
-    </div>
-
-    <a href="/bidList/list">Accéder à Bid List</a>
-
-    <div sec:authorize="hasAuthority('ADMIN')">
-        <a href="/user/list">User management</a>
-    </div>
-
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Logout</button>
-    </form>
-</div>
+<h3> HOME PAGE </h3>
+<p>
+    <a href="/login">Login</a> or create one <a href="/secure/article-details">User management</a>
+</p>
 </body>
 </html>

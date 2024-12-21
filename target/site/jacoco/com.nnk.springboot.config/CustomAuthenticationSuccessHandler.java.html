@@ -3,36 +3,91 @@
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 
-@Component
-<span class="fc" id="L17">public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {</span>
+/**
+ * Gestionnaire personnalisé de succès d'authentification pour gérer la redirection après une connexion réussie.
+ * &lt;p&gt;
+ * Ce gestionnaire détermine les rôles de l'utilisateur authentifié et effectue une redirection
+ * vers la page appropriée en fonction de son rôle.
+ * &lt;p&gt;
+ * Fonctionnalités principales :
+ * - Enregistre les rôles de l'utilisateur authentifié dans les logs.
+ * - Redirige les administrateurs vers l'URL &quot;/home&quot;.
+ * - Redirige les autres utilisateurs vers l'URL &quot;/bidList/list&quot;.
+ * &lt;p&gt;
+ * Cette classe est annotée avec @Component, ce qui en fait un composant géré par Spring.
+ */
+<span class="fc" id="L32">public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {</span>
 
-<span class="fc" id="L19">    private static final Logger logger = LogManager.getLogger(CustomAuthenticationSuccessHandler.class);</span>
+    /**
+     * Logger pour enregistrer les événements liés au succès de l'authentification.
+     */
+<span class="fc" id="L37">    private static final Logger logger = LogManager.getLogger(CustomAuthenticationSuccessHandler.class);</span>
 
+    /**
+     * Stratégie de redirection pour envoyer l'utilisateur vers une URL après une authentification réussie.
+     */
+<span class="fc" id="L42">    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();</span>
+
+    /**
+     * Méthode appelée lors d'une authentification réussie.
+     * &lt;p&gt;
+     * Elle détermine le rôle de l'utilisateur authentifié et effectue une redirection
+     * vers l'URL appropriée en fonction de ce rôle.
+     *
+     * @param request        L'objet HttpServletRequest associé à la requête HTTP.
+     * @param response       L'objet HttpServletResponse associé à la réponse HTTP.
+     * @param authentication L'objet Authentication contenant les informations de l'utilisateur authentifié.
+     * @throws IOException      Si une erreur d'entrée/sortie survient.
+     * @throws ServletException Si une erreur liée au servlet survient.
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        // Récupérer les rôles de l'utilisateur authentifié
-<span class="nc" id="L25">        Set&lt;String&gt; roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());</span>
+<span class="nc" id="L59">        logger.info(&quot;Authentification réussie pour l'utilisateur : {}&quot;, authentication.getName());</span>
 
-<span class="nc" id="L27">        logger.info(&quot;le role est {}&quot;, roles.toString());</span>
-        // Si l'utilisateur est un admin, redirection vers &quot;/home&quot;
-<span class="nc bnc" id="L29" title="All 2 branches missed.">        if (roles.contains(&quot;ADMIN&quot;)) {</span>
-<span class="nc" id="L30">            response.sendRedirect(&quot;/home&quot;);</span>
+        // Récupérer les rôles de l'utilisateur authentifié
+<span class="nc" id="L62">        Collection&lt;? extends GrantedAuthority&gt; authorities = authentication.getAuthorities();</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        if (authorities.isEmpty()) {</span>
+<span class="nc" id="L64">            logger.error(&quot;Aucun rôle trouvé pour l'utilisateur : {}&quot;, authentication.getName());</span>
+<span class="nc" id="L65">            response.sendError(HttpServletResponse.SC_FORBIDDEN, &quot;Accès interdit : aucun rôle trouvé.&quot;);</span>
+<span class="nc" id="L66">            return;</span>
         }
-        // Sinon, redirection vers &quot;/rating/list&quot;
-        else {
-<span class="nc" id="L34">            response.sendRedirect(&quot;/bidList/list&quot;);</span>
-        }
-<span class="nc" id="L36">    }</span>
+
+        // Parcourir les rôles et rediriger en conséquence
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for (GrantedAuthority authority : authorities) {</span>
+<span class="nc" id="L71">            String role = authority.getAuthority();</span>
+<span class="nc" id="L72">            logger.debug(&quot;Rôle détecté : {}&quot;, role);</span>
+
+<span class="nc bnc" id="L74" title="All 3 branches missed.">            switch (role) {</span>
+                case &quot;ROLE_ADMIN&quot;:
+<span class="nc" id="L76">                    logger.info(&quot;Redirection de l'utilisateur ADMIN vers /home&quot;);</span>
+<span class="nc" id="L77">                    redirectStrategy.sendRedirect(request, response, &quot;/&quot;);</span>
+<span class="nc" id="L78">                    return;</span>
+                case &quot;ROLE_USER&quot;:
+<span class="nc" id="L80">                    logger.info(&quot;Redirection de l'utilisateur standard vers /bidList/list&quot;);</span>
+<span class="nc" id="L81">                    redirectStrategy.sendRedirect(request, response, &quot;/bidList/list&quot;);</span>
+<span class="nc" id="L82">                    return;</span>
+                default:
+<span class="nc" id="L84">                    logger.warn(&quot;Rôle non reconnu : {}&quot;, role);</span>
+            }
+<span class="nc" id="L86">        }</span>
+
+        // Si aucun rôle valide n'a été trouvé, générer une erreur
+<span class="nc" id="L89">        logger.error(&quot;Impossible de rediriger l'utilisateur : rôle inconnu.&quot;);</span>
+<span class="nc" id="L90">        response.sendError(HttpServletResponse.SC_FORBIDDEN, &quot;Accès interdit : rôle inconnu.&quot;);</span>
+<span class="nc" id="L91">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

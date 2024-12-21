@@ -3,11 +3,30 @@
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Point d'entrée principal de l'application Spring Boot.
+ * &lt;p&gt;
+ * Cette classe démarre l'application en initialisant le contexte Spring et en lançant le serveur embarqué.
+ * Elle utilise l'annotation {@link SpringBootApplication}, qui encapsule :
+ * &lt;ul&gt;
+ *     &lt;li&gt;{@code @Configuration} : Indique que la classe est une source de configuration Spring.&lt;/li&gt;
+ *     &lt;li&gt;{@code @EnableAutoConfiguration} : Active la configuration automatique de Spring Boot.&lt;/li&gt;
+ *     &lt;li&gt;{@code @ComponentScan} : Permet de scanner les composants Spring dans le package courant et ses sous-packages.&lt;/li&gt;
+ * &lt;/ul&gt;
+ */
 @SpringBootApplication
-<span class="fc" id="L7">public class Application {</span>
+<span class="fc" id="L18">public class Application {</span>
 
+	/**
+	 * Méthode principale pour démarrer l'application.
+	 * &lt;p&gt;
+	 * Cette méthode appelle {@link SpringApplication#run(Class, String...)} pour initialiser et exécuter l'application.
+	 *
+	 * @param args Les arguments de ligne de commande (facultatifs).
+	 */
 	public static void main(String[] args) {
-<span class="nc" id="L10">		SpringApplication.run(Application.class, args);</span>
-<span class="nc" id="L11">	}</span>
+<span class="nc" id="L28">		SpringApplication.run(Application.class, args);</span>
+<span class="nc" id="L29">		System.out.println(&quot;Application Spring Boot démarrée avec succès !&quot;);</span>
+<span class="nc" id="L30">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,70 +1,115 @@
 package com.nnk.springboot.config;
 
-
-
-import com.nnk.springboot.service.UserService;
-import com.nnk.springboot.service.impl.CustomUserDetailsService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+/**
+ * Classe de configuration de la sécurité Spring Security.
+ * <p>
+ * Cette classe configure les règles de sécurité, les filtres d'authentification et d'autorisation,
+ * et les encodeurs pour protéger l'application.
+ */
+@EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Logger pour suivre les événements liés à la configuration de la sécurité.
+     */
     private static final Logger logger = LogManager.getLogger(SecurityConfig.class);
 
-    private final CustomAuthenticationSuccessHandler successHandler;
+    /**
+     * Service utilisateur personnalisé pour gérer les authentifications.
+     */
     private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler, CustomUserDetailsService customUserDetailsService) {
-        this.successHandler = successHandler;
+    /**
+     * Constructeur pour injecter les dépendances nécessaires.
+     *
+     * @param customUserDetailsService Service utilisateur personnalisé.
+     */
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-
+    /**
+     * Configure les règles de filtrage et les permissions d'accès pour l'application.
+     *
+     * @param http L'objet HttpSecurity permettant de configurer la sécurité.
+     * @return La chaîne de filtres de sécurité configurée.
+     * @throws Exception Si une erreur survient lors de la configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login").permitAll()  // Autoriser l'accès public à ces routes
-                        .requestMatchers("/user/**").hasAuthority("ADMIN") // Admin seulement
-                        .anyRequest().authenticated()  // Toutes les autres pages nécessitent une authentification
+                        .requestMatchers("/login", "/css/**", "/js/**", "/app/error").permitAll() // Autoriser l'accès public à ces routes
+                        .requestMatchers("/user/**", "/home", "/").hasAuthority("ROLE_ADMIN") // Pages accessibles uniquement aux administrateurs
+                        .anyRequest().authenticated() // Toutes les autres pages nécessitent une authentification
                 )
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/login")
-                        .successHandler(successHandler)  // Utilisation du CustomAuthenticationSuccessHandler
+                        .loginPage("/login") // Page de connexion personnalisée
+                        .successHandler(customAuthenticationSuccessHandler()) // Gestionnaire de succès personnalisé
                         .permitAll()
                 )
                 .logout(logout -> {
-                    logger.info("Configuration de la déconnexion");
+                    logger.info("Configuration de la déconnexion"); // Log d'information
                     logout
-                            .logoutSuccessUrl("/login?logout")
-                            .invalidateHttpSession(true) // Invalide la session
-                            .deleteCookies("JSESSIONID") // Supprime les cookies de session
+                            .logoutSuccessUrl("/login?logout") // Redirection après déconnexion
+                            .invalidateHttpSession(true) // Invalider la session
+                            .deleteCookies("JSESSIONID") // Supprimer les cookies de session
                             .permitAll();
                 })
-                .userDetailsService(customUserDetailsService); // Utiliser le userService injecté
-
-
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.accessDeniedPage("/app/error") // Redirection en cas d'accès interdit
+                )
+                .userDetailsService(customUserDetailsService); // Utiliser le service utilisateur personnalisé
+        logger.info("Configuration de la chaîne de filtres de sécurité terminée.");
         return http.build();
     }
 
+    /**
+     * Configure le fournisseur d'authentification avec le service utilisateur et un encodeur de mots de passe.
+     *
+     * @return Un fournisseur d'authentification configuré.
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
+        logger.info("Configuration du fournisseur d'authentification avec un encodeur BCrypt.");
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(customUserDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
+    /**
+     * Définit un encodeur de mots de passe basé sur BCrypt.
+     *
+     * @return Un encodeur BCrypt.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
+        logger.info("Création de l'encodeur de mots de passe BCrypt.");
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Définit un gestionnaire personnalisé pour gérer les succès d'authentification.
+     *
+     * @return Un gestionnaire de succès d'authentification personnalisé.
+     */
+    @Bean
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        logger.info("Création du gestionnaire personnalisé de succès d'authentification.");
+        return new CustomAuthenticationSuccessHandler();
     }
 }

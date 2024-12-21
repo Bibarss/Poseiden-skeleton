@@ -1,7 +1,7 @@
 package com.nnk.springboot.controller;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.service.UserService;
+import com.nnk.springboot.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -73,7 +73,7 @@ public class UserControllerTests {
     public void testShowUserListPage() throws Exception {
 
         // Enregistrer un User pour le test
-        userService.save(testUser);
+        userService.insert(testUser);
 
         mockMvc.perform(get("/user/list"))
                 .andExpect(status().isOk())
@@ -107,7 +107,7 @@ public class UserControllerTests {
                 .andExpect(redirectedUrl("/user/list"));
 
         // Vérifier que le User a été ajouté en base de données
-        List<User> users = userService.findAll();
+        List<User> users = userService.findAllUsers();
         assertThat(users, hasItem(hasProperty("username", is("Toto"))));
     }
 
@@ -117,7 +117,7 @@ public class UserControllerTests {
     @WithMockUser
     public void testShowUpdateForm() throws Exception {
         // Enregistrer un User pour le test
-        User savedUser = userService.save(testUser);
+        User savedUser = userService.insert(testUser);
 
         // Effectuer une requête GET sur /user/update/{id}
         mockMvc.perform(get("/user/update/" + savedUser.getId()))
@@ -131,7 +131,7 @@ public class UserControllerTests {
     @WithMockUser
     public void testUpdateUser() throws Exception {
         // Enregistrer un User pour le test
-        User savedUser = userService.save(testUser);
+        User savedUser = userService.insert(testUser);
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String pw = encoder.encode("78910");
@@ -147,7 +147,7 @@ public class UserControllerTests {
                 .andExpect(redirectedUrl("/user/list"));
 
         // Vérifier que le User a été mis à jour
-        User updatedUser = userService.findById(savedUser.getId());
+        User updatedUser = userService.findUser(savedUser.getId());
         assertNotNull(updatedUser);
         assertThat(updatedUser.getFullname(), is("TOTO Titi"));
     }
@@ -156,7 +156,7 @@ public class UserControllerTests {
     @WithMockUser
     public void testDeleteUser() throws Exception {
         // Enregistrer un User pour le test
-        User savedUser = userService.save(testUser);
+        User savedUser = userService.insert(testUser);
         int id = savedUser.getId();
 
         // Effectuer une requête GET sur /user/delete/{id}

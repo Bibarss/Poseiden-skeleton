@@ -2,7 +2,6 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)  // JUnit 5: Extension pour les tests Spring
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class TradeTests {
 
@@ -31,17 +30,17 @@ public class TradeTests {
 
 		Trade trade = new Trade();
 		trade.setAccount("Trade Account");
-		trade.setType("Type");    ;
+		trade.setType("Type");
 
 		// Save
 		trade = tradeRepository.save(trade);
 		assertNotNull(trade.getTradeId());
-        assertEquals("Trade Account", trade.getAccount());
+		assertTrue(trade.getAccount().equals("Trade Account"));
 
 		// Update
 		trade.setAccount("Trade Account Update");
 		trade = tradeRepository.save(trade);
-        assertEquals("Trade Account Update", trade.getAccount());
+		assertTrue(trade.getAccount().equals("Trade Account Update"));
 
 		// Find
 		List<Trade> listResult = tradeRepository.findAll();

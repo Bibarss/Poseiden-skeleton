@@ -2,7 +2,6 @@ package com.nnk.springboot;
 
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -16,7 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)  // JUnit 5: Extension pour les tests Spring
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class RuleTests {
 
@@ -25,9 +24,6 @@ public class RuleTests {
 
 	@Test
 	public void ruleTest() {
-
-
-		// Initialisation d'un objet RuleName pour les tests
 		RuleName rule = new RuleName();
 
 		rule.setName("Rule Name");
@@ -36,6 +32,9 @@ public class RuleTests {
 		rule.setTemplate("Template");
 		rule.setSqlStr("SQL");
 		rule.setSqlPart("SQL Part");
+
+
+
 
 		// Save
 		rule = ruleNameRepository.save(rule);
@@ -51,10 +50,13 @@ public class RuleTests {
 		List<RuleName> listResult = ruleNameRepository.findAll();
 		assertTrue(listResult.size() > 0);
 
+
 		// Delete
 		Integer id = rule.getId();
 		ruleNameRepository.delete(rule);
 		Optional<RuleName> ruleList = ruleNameRepository.findById(id);
 		assertFalse(ruleList.isPresent());
 	}
+
+
 }
