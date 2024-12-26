@@ -48,7 +48,7 @@ public class BidList {
     private String trader;
     private String book;
 
-    @Column(name = "curve_id")
+    @Column(name = "creation_name")
     private String creationName;
 
     @Column(name = "creation_date")

@@ -52,7 +52,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login", "/css/**", "/js/**", "/app/error").permitAll() // Autoriser l'accès public à ces routes
+                        .requestMatchers("/login", "/css/**", "/js/**", "/error").permitAll() // Autoriser l'accès public à ces routes
                         .requestMatchers("/user/**", "/home", "/").hasAuthority("ROLE_ADMIN") // Pages accessibles uniquement aux administrateurs
                         .anyRequest().authenticated() // Toutes les autres pages nécessitent une authentification
                 )
@@ -70,7 +70,7 @@ public class SecurityConfig {
                             .permitAll();
                 })
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedPage("/app/error") // Redirection en cas d'accès interdit
+                        exceptionHandling.accessDeniedPage("/error/403") // Redirection en cas d'accès interdit
                 )
                 .userDetailsService(customUserDetailsService); // Utiliser le service utilisateur personnalisé
         logger.info("Configuration de la chaîne de filtres de sécurité terminée.");

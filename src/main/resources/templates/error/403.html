@@ -10,7 +10,8 @@
 	    <form th:action="@{/logout}" method="POST">
 	         <input type="submit" value="Logout"/>
 	    </form>
-   </div> 	 
-    <p class="error" th:text="${errorMsg}">Error</p>
+   </div>
+   <p class="error" th:if="${errorMsg}" th:text="${errorMsg}">Default Error Message</p>
+   <p class="error" th:unless="${errorMsg}">Access denied.</p>
 </body>
 </html>   
