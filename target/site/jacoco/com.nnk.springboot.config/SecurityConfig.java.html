@@ -52,30 +52,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 <span class="fc" id="L53">        http</span>
 <span class="fc" id="L54">                .authorizeHttpRequests(authorizeRequests -&gt; authorizeRequests</span>
-<span class="fc" id="L55">                        .requestMatchers(&quot;/login&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/app/error&quot;).permitAll() // Autoriser l'accès public à ces routes</span>
-<span class="fc" id="L56">                        .requestMatchers(&quot;/user/**&quot;, &quot;/home&quot;, &quot;/&quot;).hasAuthority(&quot;ROLE_ADMIN&quot;) // Pages accessibles uniquement aux administrateurs</span>
-<span class="fc" id="L57">                        .anyRequest().authenticated() // Toutes les autres pages nécessitent une authentification</span>
+<span class="fc" id="L55">                        .requestMatchers(&quot;/login&quot;, &quot;/css/**&quot;, &quot;/js/**&quot;, &quot;/403&quot;, &quot;/error/**&quot;).permitAll()</span>
+<span class="fc" id="L56">                        .requestMatchers(&quot;/user/**&quot;, &quot;/home&quot;, &quot;/&quot;).hasAuthority(&quot;ROLE_ADMIN&quot;)</span>
+<span class="fc" id="L57">                        .anyRequest().authenticated()</span>
                 )
 <span class="fc" id="L59">                .formLogin(formLogin -&gt; formLogin</span>
-<span class="fc" id="L60">                        .loginPage(&quot;/login&quot;) // Page de connexion personnalisée</span>
-<span class="fc" id="L61">                        .successHandler(customAuthenticationSuccessHandler()) // Gestionnaire de succès personnalisé</span>
-<span class="fc" id="L62">                        .permitAll()</span>
+<span class="fc" id="L60">                        .loginPage(&quot;/login&quot;)</span>
+                        // Indiquer quel handler utiliser après une authentification réussie
+<span class="fc" id="L62">                        .successHandler(customAuthenticationSuccessHandler())</span>
+                        // En cas d’échec (mauvais login / password), on renvoie vers /login?error=true
+<span class="fc" id="L64">                        .failureUrl(&quot;/login?error=true&quot;)</span>
+<span class="fc" id="L65">                        .permitAll()</span>
                 )
-<span class="fc" id="L64">                .logout(logout -&gt; {</span>
-<span class="fc" id="L65">                    logger.info(&quot;Configuration de la déconnexion&quot;); // Log d'information</span>
-<span class="fc" id="L66">                    logout</span>
-<span class="fc" id="L67">                            .logoutSuccessUrl(&quot;/login?logout&quot;) // Redirection après déconnexion</span>
-<span class="fc" id="L68">                            .invalidateHttpSession(true) // Invalider la session</span>
-<span class="fc" id="L69">                            .deleteCookies(&quot;JSESSIONID&quot;) // Supprimer les cookies de session</span>
-<span class="fc" id="L70">                            .permitAll();</span>
-<span class="fc" id="L71">                })</span>
-<span class="fc" id="L72">                .exceptionHandling(exceptionHandling -&gt;</span>
-<span class="fc" id="L73">                        exceptionHandling.accessDeniedPage(&quot;/app/error&quot;) // Redirection en cas d'accès interdit</span>
+<span class="fc" id="L67">                .logout(logout -&gt; logout</span>
+<span class="fc" id="L68">                        .logoutSuccessUrl(&quot;/login?logout&quot;)</span>
+<span class="fc" id="L69">                        .invalidateHttpSession(true)</span>
+<span class="fc" id="L70">                        .deleteCookies(&quot;JSESSIONID&quot;)</span>
+<span class="fc" id="L71">                        .permitAll()</span>
                 )
-<span class="fc" id="L75">                .userDetailsService(customUserDetailsService); // Utiliser le service utilisateur personnalisé</span>
-<span class="fc" id="L76">        logger.info(&quot;Configuration de la chaîne de filtres de sécurité terminée.&quot;);</span>
+                // Gère l'accès refusé (403)
+<span class="fc" id="L74">                .exceptionHandling(exceptionHandling -&gt; exceptionHandling.accessDeniedPage(&quot;/403&quot;))</span>
+<span class="fc" id="L75">                .userDetailsService(customUserDetailsService);</span>
+
 <span class="fc" id="L77">        return http.build();</span>
     }
+
 
     /**
      * Configure le fournisseur d'authentification avec le service utilisateur et un encodeur de mots de passe.
@@ -84,11 +85,11 @@ public class SecurityConfig {
      */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-<span class="fc" id="L87">        logger.info(&quot;Configuration du fournisseur d'authentification avec un encodeur BCrypt.&quot;);</span>
-<span class="fc" id="L88">        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</span>
-<span class="fc" id="L89">        authProvider.setUserDetailsService(customUserDetailsService);</span>
-<span class="fc" id="L90">        authProvider.setPasswordEncoder(passwordEncoder());</span>
-<span class="fc" id="L91">        return authProvider;</span>
+<span class="fc" id="L88">        logger.info(&quot;Configuration du fournisseur d'authentification avec un encodeur BCrypt.&quot;);</span>
+<span class="fc" id="L89">        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</span>
+<span class="fc" id="L90">        authProvider.setUserDetailsService(customUserDetailsService);</span>
+<span class="fc" id="L91">        authProvider.setPasswordEncoder(passwordEncoder());</span>
+<span class="fc" id="L92">        return authProvider;</span>
     }
 
     /**
@@ -98,8 +99,8 @@ public class SecurityConfig {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-<span class="fc" id="L101">        logger.info(&quot;Création de l'encodeur de mots de passe BCrypt.&quot;);</span>
-<span class="fc" id="L102">        return new BCryptPasswordEncoder();</span>
+<span class="fc" id="L102">        logger.info(&quot;Création de l'encodeur de mots de passe BCrypt.&quot;);</span>
+<span class="fc" id="L103">        return new BCryptPasswordEncoder();</span>
     }
 
     /**
@@ -109,8 +110,8 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-<span class="fc" id="L112">        logger.info(&quot;Création du gestionnaire personnalisé de succès d'authentification.&quot;);</span>
-<span class="fc" id="L113">        return new CustomAuthenticationSuccessHandler();</span>
+<span class="fc" id="L113">        logger.info(&quot;Création du gestionnaire personnalisé de succès d'authentification.&quot;);</span>
+<span class="fc" id="L114">        return new CustomAuthenticationSuccessHandler();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

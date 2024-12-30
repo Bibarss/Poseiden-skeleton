@@ -1,5 +1,5 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-spring-boot-skeleton,com.nnk.springboot.controllers,LoginController,25,19,0,0,7,6,2,2,2,2
+spring-boot-skeleton,com.nnk.springboot.controllers,LoginController,0,49,0,2,0,14,0,5,0,4
 spring-boot-skeleton,com.nnk.springboot.controllers,HomeController,2,3,0,0,1,1,1,1,1,1
 spring-boot-skeleton,com.nnk.springboot.controllers,CurveController,22,133,6,6,6,34,6,8,0,8
 spring-boot-skeleton,com.nnk.springboot.controllers,UserController,17,118,4,4,5,31,4,8,0,8
@@ -7,14 +7,14 @@ spring-boot-skeleton,com.nnk.springboot.controllers,BidListController,22,136,6,6
 spring-boot-skeleton,com.nnk.springboot.controllers,RatingController,22,133,6,6,6,34,6,8,0,8
 spring-boot-skeleton,com.nnk.springboot.controllers,TradeController,22,133,6,6,6,34,6,8,0,8
 spring-boot-skeleton,com.nnk.springboot.controllers,RuleNameController,22,133,6,6,6,34,6,8,0,8
-spring-boot-skeleton,com.nnk.springboot.services.impl,UserServiceImpl,12,69,0,0,2,17,1,8,1,8
+spring-boot-skeleton,com.nnk.springboot.services.impl,UserServiceImpl,0,81,0,0,0,19,0,9,0,9
 spring-boot-skeleton,com.nnk.springboot.services.impl,RatingServiceImpl,0,69,0,0,0,17,0,8,0,8
 spring-boot-skeleton,com.nnk.springboot.services.impl,CurvePointServiceImpl,0,69,0,0,0,17,0,8,0,8
 spring-boot-skeleton,com.nnk.springboot.services.impl,BidListServiceImpl,11,70,0,0,3,18,1,8,1,8
 spring-boot-skeleton,com.nnk.springboot.services.impl,RuleNameServiceImpl,0,69,0,0,0,17,0,8,0,8
 spring-boot-skeleton,com.nnk.springboot.services.impl,TradeServiceImpl,0,69,0,0,0,17,0,8,0,8
-spring-boot-skeleton,com.nnk.springboot.config,CustomUserDetailsService,65,10,2,0,15,4,3,2,2,2
-spring-boot-skeleton,com.nnk.springboot.config,CustomAuthenticationSuccessHandler,79,12,7,0,21,3,5,2,1,2
-spring-boot-skeleton,com.nnk.springboot.config,SecurityConfig,0,140,0,0,0,35,0,10,0,10
+spring-boot-skeleton,com.nnk.springboot.config,CustomUserDetailsService,0,75,0,2,0,19,0,5,0,4
+spring-boot-skeleton,com.nnk.springboot.config,CustomAuthenticationSuccessHandler,23,68,3,4,8,16,3,4,0,3
+spring-boot-skeleton,com.nnk.springboot.config,SecurityConfig,0,141,0,0,0,31,0,10,0,10
 spring-boot-skeleton,com.nnk.springboot,Application,8,3,0,0,3,1,1,1,1,1
 spring-boot-skeleton,com.nnk.springboot.domain,User,0,35,0,0,0,15,0,10,0,10

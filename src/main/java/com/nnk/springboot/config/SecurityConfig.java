@@ -52,30 +52,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/login", "/css/**", "/js/**", "/error").permitAll() // Autoriser l'accès public à ces routes
-                        .requestMatchers("/user/**", "/home", "/").hasAuthority("ROLE_ADMIN") // Pages accessibles uniquement aux administrateurs
-                        .anyRequest().authenticated() // Toutes les autres pages nécessitent une authentification
+                        .requestMatchers("/login", "/css/**", "/js/**", "/403", "/error/**").permitAll()
+                        .requestMatchers("/user/**", "/home", "/").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/login") // Page de connexion personnalisée
-                        .successHandler(customAuthenticationSuccessHandler()) // Gestionnaire de succès personnalisé
+                        .loginPage("/login")
+                        // Indiquer quel handler utiliser après une authentification réussie
+                        .successHandler(customAuthenticationSuccessHandler())
+                        // En cas d’échec (mauvais login / password), on renvoie vers /login?error=true
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
-                .logout(logout -> {
-                    logger.info("Configuration de la déconnexion"); // Log d'information
-                    logout
-                            .logoutSuccessUrl("/login?logout") // Redirection après déconnexion
-                            .invalidateHttpSession(true) // Invalider la session
-                            .deleteCookies("JSESSIONID") // Supprimer les cookies de session
-                            .permitAll();
-                })
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedPage("/error/403") // Redirection en cas d'accès interdit
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
                 )
-                .userDetailsService(customUserDetailsService); // Utiliser le service utilisateur personnalisé
-        logger.info("Configuration de la chaîne de filtres de sécurité terminée.");
+                // Gère l'accès refusé (403)
+                .exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedPage("/403"))
+                .userDetailsService(customUserDetailsService);
+
         return http.build();
     }
+
 
     /**
      * Configure le fournisseur d'authentification avec le service utilisateur et un encodeur de mots de passe.

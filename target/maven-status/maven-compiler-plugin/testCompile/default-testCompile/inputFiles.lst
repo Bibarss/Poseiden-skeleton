@@ -1,6 +1,9 @@
 C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\BidTests.java
+C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\config\CustomAuthenticationSuccessHandlerTests.java
+C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\config\CustomUserDetailsServiceTests.java
 C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\controller\BidListControllerTests.java
 C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\controller\CurvePointControllerTests.java
+C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\controller\LoginControllerTests.java
 C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\controller\RatingControllerTests.java
 C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\controller\RuleNameControllerTests.java
 C:\Perso\Formation\Poseiden-skeleton\src\test\java\com\nnk\springboot\controller\TradeControllerTests.java
